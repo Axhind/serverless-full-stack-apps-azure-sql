@@ -45,9 +45,11 @@ namespace GetBusData
         {
             // Get the real-time bus location feed
             var feed = await GetRealTimeFeed();
-            
+            _log.LogInformation($"Feed retrieved");
+
             // Get the routes we want to monitor
             var monitoredRoutes = await GetMonitoredRoutes();
+            _log.LogInformation($"Monitored routes retrieved");
 
             // Filter only the routes we want to monitor
             var buses = feed.Entities.FindAll(e => monitoredRoutes.Contains(e.Vehicle.Trip.RouteId));
@@ -56,6 +58,7 @@ namespace GetBusData
 
             // Push data to Azure SQL and get the activated geofences
             var activatedGeofences = await ProcessGeoFences(buses);
+            _log.LogInformation($"Geofences processed");
 
             // Send notifications
             foreach(var gf in activatedGeofences)
